@@ -82,12 +82,12 @@ for grib2_file in "${file_list[@]}"; do
 
     # PNG作成
     ./grib2uv2png.sh "$grib2_file" \
-      -o "png/wind_${base_name}.png" \
+      -o "png/${base_name}.png" \
       -u ":UGRD:10 m above ground:" \
       -v ":VGRD:10 m above ground:" \
       -scale -40 40
 
-    echo "Created png/wind_${base_name}.png"
+    echo "Created png/${base_name}.png"
   fi
 done
 
