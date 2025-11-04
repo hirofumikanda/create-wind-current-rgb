@@ -95,6 +95,50 @@ NOAA GFS（Global Forecast System）の気象風ベクトルデータを処理�
 - **PNG出力**：`wind_wind_YYYYMMDD_HHH.png`
 - **予報時間**：HHHは000-384の3桁ゼロパディング
 
+## データ可視化例
+出力したPNG画像は[WeatherLayers GL](https://docs.weatherlayers.com/weatherlayers-gl)で可視化することができます。
+
+スクリプト例は以下のとおりです。
+```js
+import { MapboxOverlay } from '@deck.gl/mapbox';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import * as WeatherLayers from 'weatherlayers-gl';
+
+const map = new maplibregl.Map({
+  container: 'map',
+  style: './style/style.json',
+  center: [136.51, 37.88],
+  zoom: 2.8,
+  attributionControl: {
+    customAttribution: '<a href="https://registry.opendata.aws/noaa-gfs-bdp-pds/" target="_blank">Processed from NOAA Global Forecast System (GFS) data accessed on 20251101</a>',
+  }
+});
+
+map.on('load', async () => {
+
+  const image = await WeatherLayers.loadTextureData('./img/wind_20251101_000.png');
+
+  const deckOverlay = new MapboxOverlay({
+    interleaved: true,
+    layers: [
+      new WeatherLayers.ParticleLayer({
+        id: 'particle',
+        numParticles: 5000,
+        maxAge: 10,
+        speedFactor: 30,
+        width: 2.0,
+        opacity: 0.05,
+        image: image,
+        bounds: [-180, -90, 180, 90],
+        imageUnscale: [-40, 40],
+      }),
+    ]
+  });
+
+  map.addControl(deckOverlay);
+});
+```
 ## ライセンス
 
 このプロジェクトはMITライセンスで公開されています。
